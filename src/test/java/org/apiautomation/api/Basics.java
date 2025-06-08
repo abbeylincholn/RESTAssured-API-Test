@@ -34,6 +34,32 @@ public class Basics {
 
 
         //Add place -> update place with new address -> Get place to validate if new address is present in the response
+        String newAddress = "112 Bronte Court, Salford";
+        given().log().all().queryParam("key", "qaclick123").header("Content-Type", "application/json")
+                .body("{\n" +
+                        "    \"place_id\": \""+placeId+"\",\n" +
+                        "    \"address\": \""+newAddress+"\",\n" +
+                        "    \"key\":\"qaclick123\"\n" +
+                        "   \n" +
+                        "}")
+                .when().put("/maps/api/place/update/json")
+                .then().assertThat().log().all().statusCode(200)
+                .body("msg", equalTo("Address successfully updated"));
+
+        //Get the place to validate if new address is present in the response
+
+        String getPlaceResponse = given().log().all().queryParam("key", "qaclick123")
+                .queryParam("place_id", placeId)
+                .when().get("/maps/api/place/get/json")
+                .then().assertThat().log().all().statusCode(200)
+                .extract().response().asString();
+
+        JsonPath js = new JsonPath(getPlaceResponse);
+        String actualAddress = js.getString("address");
+        System.out.println("Actual Address: " + actualAddress);
+
+        //Cucumber JUnit, TestNG
+
 
 
 

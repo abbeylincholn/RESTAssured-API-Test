@@ -1,9 +1,11 @@
 package org.apiautomation.api;
 
 
+import files.ReUsableMethods;
 import files.payload;
 import io.restassured.RestAssured;
 import io.restassured.path.json.JsonPath;
+import org.testng.Assert;
 
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.equalTo;
@@ -27,7 +29,7 @@ public class Basics {
                 .extract().response().asString();
 
         System.out.println("responseBody: "+response);
-        JsonPath jsonPath = new JsonPath(response);   // JsonPath is a library that allows you to extract data from JSON responses easily // parse the response to JsonPath object
+        JsonPath jsonPath = ReUsableMethods.rawToJson(response);
         String placeId = jsonPath.getString("place_id"); // get the place id from the response
 
         System.out.println("Place ID: " + placeId);
@@ -54,11 +56,13 @@ public class Basics {
                 .then().assertThat().log().all().statusCode(200)
                 .extract().response().asString();
 
-        JsonPath js = new JsonPath(getPlaceResponse);
+        JsonPath js = ReUsableMethods.jsonPath(getPlaceResponse);
         String actualAddress = js.getString("address");
         System.out.println("Actual Address: " + actualAddress);
 
-        //Cucumber JUnit, TestNG
+        //Cucumber JUnit, TestNG  //Assertions
+        Assert.assertEquals(newAddress, actualAddress);
+
 
 
 
